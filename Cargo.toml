@@ -1,0 +1,8 @@
+[package]
+name = "algorithm_exercises"
+version = "0.1.0"
+edition = "2024"
+description = "A simple example crate"
+license = "MIT"
+
+[dependencies]
