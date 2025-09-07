@@ -3,7 +3,7 @@
 //! 该模块提供了一个原地删除最小元素的简单算法：把最后一个元素移动到最小元素的位置，
 //! 然后弹出最后一个元素。时间复杂度 O(n)，额外空间 O(1)。
 
-use std::fmt::Debug;
+use std::{fmt::Debug};
 
 /// 从可变 `Vec` 中删除最小值：用最后一个元素覆盖最小值位置并弹出最后一个元素。
 ///
@@ -44,10 +44,25 @@ where
     }
 }
 
+pub fn reverse<T>(list:&mut Vec<T>)
+where T:Copy+Debug
+{
+    for i in 0..list.len()/2 {
+        let j=list.len()-i-1;
+        list.swap(i, j);
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    #[test]
+    fn test_reverse(){
+        let mut val=vec![1,2,3,4,5,6];
+        reverse(&mut val);
+        assert_eq!(val,vec![6,5,4,3,2,1]);
+    }
     #[test]
     fn test_empty() {
         let mut v: Vec<i32> = vec![];
