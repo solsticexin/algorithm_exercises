@@ -53,6 +53,21 @@ where T:Copy+Debug
     }
 }
 
+pub fn del_x<T>(list:&mut Vec<T>,x:T)
+where T:PartialEq
+{
+    list.retain(|elem| *elem!=x);
+}
+
+pub fn del_x_t<T>(list:&mut Vec<T>,s:T,t:T)->bool
+where T:PartialOrd
+{
+ if s>=t{
+    return false
+ }
+ list.retain(|elem| *elem<s || *elem >t);
+ true
+}
 
 #[cfg(test)]
 mod tests {
@@ -96,5 +111,48 @@ mod tests {
         // 仍然会有一个 3（因为原来有两个），但至少删除了一个
         let count_3 = v.iter().filter(|&&x| x == 3).count();
         assert_eq!(count_3, 1);
+    }
+    
+    #[test]
+     fn test_del_x_t() {
+        // 测试正常情况
+        let mut vec1 = vec![1, 2, 3, 4, 5];
+        assert_eq!(del_x_t(&mut vec1, 2, 4), true);
+        assert_eq!(vec1, vec![1, 5]);
+
+        // 测试边界值
+        let mut vec2 = vec![1, 2, 3, 4, 5];
+        assert_eq!(del_x_t(&mut vec2, 1, 5), true);
+        assert_eq!(vec2, vec![]);
+
+        // 测试空向量
+        let mut vec3: Vec<i32> = vec![];
+        assert_eq!(del_x_t(&mut vec3, 2, 4), true);
+        assert_eq!(vec3, vec![]);
+
+        // 测试s>=t的情况
+        let mut vec4 = vec![1, 2, 3, 4, 5];
+        assert_eq!(del_x_t(&mut vec4, 4, 2), false);
+        assert_eq!(vec4, vec![1, 2, 3, 4, 5]);
+
+        // 测试浮点数
+        let mut vec5 = vec![1.0, 2.5, 3.5, 4.0, 5.0];
+        assert_eq!(del_x_t(&mut vec5, 2.0, 4.0), true);
+        assert_eq!(vec5, vec![1.0, 5.0]);
+
+        // 测试所有元素都在范围内
+        let mut vec6 = vec![2, 3, 4];
+        assert_eq!(del_x_t(&mut vec6, 1, 5), true);
+        assert_eq!(vec6, vec![]);
+
+        // 测试所有元素都不在范围内
+        let mut vec7 = vec![1, 5];
+        assert_eq!(del_x_t(&mut vec7, 2, 4), true);
+        assert_eq!(vec7, vec![1, 5]);
+
+        // 测试重复元素
+        let mut vec8 = vec![1, 2, 2, 3, 3, 3, 4, 5];
+        assert_eq!(del_x_t(&mut vec8, 2, 4), true);
+        assert_eq!(vec8, vec![1, 5]);
     }
 }

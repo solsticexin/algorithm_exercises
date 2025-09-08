@@ -38,4 +38,13 @@ where T:PartialOrd+Copy+Default
         self.len=self.len-1;
         result
     }
+    pub fn locate_elem(&self,elem:T)->usize{
+        for i in 0..=self.len{
+            if self.data[i] ==elem {
+                return i+1;
+            }
+        }
+        0
+    }
+    
 }
