@@ -1,15 +1,21 @@
-///! Sequential list module providing SqList implementation.
+///! 顺序表模块提供SqList实现
 ///
-/// This module defines a sequential list using a fixed-size array.
+/// 该模块使用固定大小的数组定义顺序表。
+///
+/// 实现思想：使用固定大小的数组存储元素，维护长度字段跟踪当前元素数量，
+/// 提供基于数组的顺序表操作接口。
 
 pub mod sq_list;
 
 /// Maximum capacity of the SqList.
 const MAX_SIZE: usize = 50;
 
-/// Sequential list structure implemented with a fixed-size array.
+/// 使用固定大小数组实现的顺序表结构
 ///
-/// Supports generic type T where T is PartialOrd, Copy, and Default.
+/// 支持泛型类型T，其中T需要实现PartialOrd、Copy和Default trait。
+///
+/// 实现思想：使用固定大小的数组存储数据，维护长度字段len跟踪有效元素数量，
+/// 提供基于数组的插入、删除、查找等操作。
 pub struct SqList<T> {
     data: [T; MAX_SIZE],
     len: usize,

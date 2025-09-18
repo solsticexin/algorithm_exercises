@@ -1,13 +1,17 @@
-///! Stack module providing Stack implementation and utility functions.
+///! 栈模块提供栈实现和实用函数
 ///
-/// This module implements a dynamic stack using Vec, along with functions for
-/// parenthesis checking, binary conversion, and base conversion.
+/// 该模块使用Vec实现动态栈，包含括号检查、二进制转换和进制转换等功能。
+///
+/// 实现思想：使用Rust的Vec作为底层存储，提供O(1)时间复杂度的push/pop操作，
+/// 并通过栈结构解决括号匹配、进制转换等经典算法问题。
 use std::fmt::Debug; // Assuming Debug for potential use, but not strictly needed
-use std::collections:: HashMap;
 
-/// Stack structure implemented with a dynamic Vec.
+/// 使用动态Vec实现的栈结构
 ///
-/// Supports generic type T.
+/// 支持泛型类型T。
+///
+/// 实现思想：使用Vec作为底层存储，维护size字段跟踪当前元素数量，
+/// 提供类型安全的栈操作接口。
 #[derive(Debug)]
 pub struct Stack<T> {
     size: usize,
@@ -15,9 +19,11 @@ pub struct Stack<T> {
 }
 
 impl<T> Stack<T> {
-    /// Creates a new empty Stack.
+    /// 创建一个新的空栈
     ///
-    /// Initializes with size 0 and empty Vec.
+    /// 初始化size为0，使用空的Vec。
+    ///
+    /// 实现思想：使用Vec::new()创建空向量，size初始化为0。
     pub fn new() -> Self {
         Self {
             size: 0,
@@ -25,35 +31,45 @@ impl<T> Stack<T> {
         }
     }
 
-    /// Checks if the stack is empty.
+    /// 检查栈是否为空
     ///
-    /// Returns true if size is 0.
+    /// 如果size为0则返回true。
+    ///
+    /// 实现思想：通过检查size字段是否为0来判断栈是否为空，时间复杂度O(1)。
     pub fn is_empty(&self) -> bool {
         self.size == 0
     }
 
-    /// Returns the current size of the stack.
+    /// 返回栈的当前大小
+    ///
+    /// 实现思想：直接返回size字段的值，时间复杂度O(1)。
     pub fn len(&self) -> usize {
         self.size
     }
 
-    /// Clears the stack.
+    /// 清空栈
     ///
-    /// Resets size to 0 and clears the underlying Vec.
+    /// 将size重置为0并清空底层Vec。
+    ///
+    /// 实现思想：调用Vec::clear()方法清空向量，同时将size设为0。
     pub fn clear(&mut self) {
         self.size = 0;
         self.data.clear();
     }
 
-    /// Pushes a value onto the top of the stack.
+    /// 将值压入栈顶
+    ///
+    /// 实现思想：使用Vec::push()方法将值添加到向量末尾，同时递增size计数器。
     pub fn push(&mut self, val: T) {
         self.data.push(val);
         self.size += 1;
     }
 
-    /// Pops and returns the top value from the stack.
+    /// 弹出并返回栈顶的值
     ///
-    /// Returns None if the stack is empty.
+    /// 如果栈为空则返回None。
+    ///
+    /// 实现思想：使用Vec::pop()方法移除并返回最后一个元素，同时递减size计数器。
     pub fn pop(&mut self) -> Option<T> {
         if self.size == 0 {
             return None;
@@ -63,9 +79,11 @@ impl<T> Stack<T> {
         del
     }
 
-    /// Returns a reference to the top value without removing it.
+    /// 返回栈顶值的引用而不移除它
     ///
-    /// Returns None if the stack is empty.
+    /// 如果栈为空则返回None。
+    ///
+    /// 实现思想：使用Vec::get()方法获取最后一个元素的引用，时间复杂度O(1)。
     pub fn peek(&self) -> Option<&T> {
         if self.size == 0 {
             return None;
@@ -73,9 +91,11 @@ impl<T> Stack<T> {
         self.data.get(self.size - 1)
     }
 
-    /// Returns a mutable reference to the top value without removing it.
+    /// 返回栈顶值的可变引用而不移除它
     ///
-    /// Returns None if the stack is empty.
+    /// 如果栈为空则返回None。
+    ///
+    /// 实现思想：通过索引直接访问最后一个元素的可变引用，时间复杂度O(1)。
     pub fn peek_mut(&mut self) -> Option<&mut T> {
         if self.size == 0 {
             return None;
@@ -84,18 +104,23 @@ impl<T> Stack<T> {
     }
 }
 
-/// Checks if two parentheses characters match.
+/// 检查两个括号字符是否匹配
 ///
-/// Returns true if open and close form a valid pair.
+/// 如果开括号和闭括号形成有效对则返回true。
+///
+/// 实现思想：通过预定义的括号字符串查找字符位置，比较位置是否相同来判断是否匹配。
 fn par_match(open: char, close: char) -> bool {
     let opens = "([{"; // Fixed string without ;
     let closers = ")]}";
     opens.find(open) == closers.find(close)
 }
 
-/// Checks if parentheses in a string are balanced and correctly matched.
+/// 检查字符串中的括号是否平衡且正确匹配
 ///
-/// Uses a stack to validate nesting. Returns true if balanced.
+/// 使用栈验证嵌套。如果平衡则返回true。
+///
+/// 实现思想：遍历字符串字符，遇到开括号压栈，遇到闭括号时弹出栈顶元素检查是否匹配，
+/// 最终检查栈是否为空来判断括号是否完全匹配。
 pub fn par_checker(par: &str) -> bool {
     let mut char_list = Vec::new();
     for char_ in par.chars() {
@@ -125,9 +150,12 @@ pub fn par_checker(par: &str) -> bool {
     balance && stack.is_empty()
 }
 
-/// Converts a decimal number to binary string using stack.
+/// 使用栈将十进制数转换为二进制字符串
 ///
-/// Pops remainders from stack to build the binary representation.
+/// 从栈中弹出余数来构建二进制表示。
+///
+/// 实现思想：通过不断除以2获取余数并压栈，然后依次弹出余数构建二进制字符串，
+/// 实现十进制到二进制的转换。
 pub fn divide_by_two(mut dec_num: u32) -> String {
     let mut rem_stack = Stack::new();
     while dec_num > 0 {
@@ -141,64 +169,4 @@ pub fn divide_by_two(mut dec_num: u32) -> String {
         bin_str += &rem;
     }
     bin_str
-}
-
-/// Converts a decimal number to a string in the given base (2-16).
-///
-/// Uses digits 0-9, A-F for bases >10. Builds result by popping from stack.
-pub fn base_converter(mut dec_num: u32, base: u32) -> String {
-    let digits: [char; 16] = [
-        '0', '1', '2', '3', '4', '5', '6', '7',
-        '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
-    ];
-    let mut rem_stack = Stack::new();
-    while dec_num > 0 {
-        let rem = dec_num % base;
-        rem_stack.push(rem);
-        dec_num /= base;
-    }
-    let mut base_str = String::new();
-    while !rem_stack.is_empty() {
-        let rem = rem_stack.pop().unwrap() as usize;
-        base_str.push(digits[rem]);
-    }
-    base_str
-}
-pub fn infix_to_posfix(infix:&str)->Option<String>{
-    if !par_checker(infix){return None;}
-    //设置符号优先级
-    let mut  prec=HashMap::new();
-    prec.insert("(",1);prec.insert(")",1);
-    prec.insert("+",2);prec.insert("-",2);
-    prec.insert("*",3);prec.insert("/",3);
-
-    let mut ops =Stack::new();
-    let mut  postfix = Vec::new();
-    for token in infix.split_whitespace() {
-        if ("A" <= token && token <= "Z" ) || ("0" <= token && token <= "9"){
-            postfix.push(token);
-        }else if "(" == token {
-            ops.push(token);
-        }else if ")" ==token {
-            let mut top = ops.pop().unwrap();
-            while  top != "(" {
-                postfix.push(top);
-                top=ops.pop().unwrap();
-            }
-        }else {
-            while (!ops.is_empty()) && (prec[ops.peek().unwrap()])>= prec[token] {
-                postfix.push(ops.pop().unwrap());
-            }
-            ops.push(token);
-        }
-    }
-    while !ops.is_empty() {
-        postfix.push(ops.pop().unwrap());
-    }
-    let mut postfix_str = "".to_string();
-    for postfix in postfix {
-        postfix_str +=&postfix.to_string();
-        postfix_str +=" ";
-    }
-    Some(postfix_str)
 }
