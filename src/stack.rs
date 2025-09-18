@@ -3,6 +3,7 @@
 /// This module implements a dynamic stack using Vec, along with functions for
 /// parenthesis checking, binary conversion, and base conversion.
 use std::fmt::Debug; // Assuming Debug for potential use, but not strictly needed
+use std::collections:: HashMap;
 
 /// Stack structure implemented with a dynamic Vec.
 ///
@@ -162,4 +163,42 @@ pub fn base_converter(mut dec_num: u32, base: u32) -> String {
         base_str.push(digits[rem]);
     }
     base_str
+}
+pub fn infix_to_posfix(infix:&str)->Option<String>{
+    if !par_checker(infix){return None;}
+    //设置符号优先级
+    let mut  prec=HashMap::new();
+    prec.insert("(",1);prec.insert(")",1);
+    prec.insert("+",2);prec.insert("-",2);
+    prec.insert("*",3);prec.insert("/",3);
+
+    let mut ops =Stack::new();
+    let mut  postfix = Vec::new();
+    for token in infix.split_whitespace() {
+        if ("A" <= token && token <= "Z" ) || ("0" <= token && token <= "9"){
+            postfix.push(token);
+        }else if "(" == token {
+            ops.push(token);
+        }else if ")" ==token {
+            let mut top = ops.pop().unwrap();
+            while  top != "(" {
+                postfix.push(top);
+                top=ops.pop().unwrap();
+            }
+        }else {
+            while (!ops.is_empty()) && (prec[ops.peek().unwrap()])>= prec[token] {
+                postfix.push(ops.pop().unwrap());
+            }
+            ops.push(token);
+        }
+    }
+    while !ops.is_empty() {
+        postfix.push(ops.pop().unwrap());
+    }
+    let mut postfix_str = "".to_string();
+    for postfix in postfix {
+        postfix_str +=&postfix.to_string();
+        postfix_str +=" ";
+    }
+    Some(postfix_str)
 }
