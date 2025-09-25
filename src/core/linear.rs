@@ -55,7 +55,8 @@ struct SeqList<ElemType>{
     data:Vec<ElemType>,
 }
 impl <ElemType> SeqList<ElemType>
-where ElemType:Clone+Collection{
+where ElemType:Clone+Collection
+{
     pub fn new()->SeqList<ElemType> {
         SeqList{
             data:Vec::with_capacity(MAX_SIZE)
@@ -63,7 +64,7 @@ where ElemType:Clone+Collection{
 }
 
 }
-trait Collection{
+pub trait Collection{
     type Item;
     fn len(&self)->usize;
     //按值查找

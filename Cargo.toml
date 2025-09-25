@@ -1,6 +1,6 @@
 [package]
 name = "algorithm_exercises"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2024"
 
 description = "一组算法练习与小工具集合，包含顺序表等数据结构的实现与示例。"
